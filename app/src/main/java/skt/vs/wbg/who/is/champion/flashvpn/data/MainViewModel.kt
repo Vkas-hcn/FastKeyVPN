@@ -187,7 +187,10 @@ class MainViewModel : ViewModel() {
                     }
 
                     OpenServiceState.DISCONNECTED -> {
-
+                        Log.e(
+                            TAG,
+                            "initOb: ${it.lifecycle.currentState == Lifecycle.State.RESUMED}"
+                        )
                         if (isClickConnect && !isFailConnect && it.lifecycle.currentState == Lifecycle.State.RESUMED) {
                             showConnectLive.postValue(false)
                             isClickConnect = false
@@ -248,7 +251,7 @@ class MainViewModel : ViewModel() {
 
             setIcon.setOnClickListener {
                 "f26".putPointYep(ac)
-                if(openServerState.value == OpenServiceState.DISCONNECTING) {
+                if (openServerState.value == OpenServiceState.DISCONNECTING) {
                     stopToConnectOrDisConnect()
                     return@setOnClickListener
                 }
@@ -261,7 +264,7 @@ class MainViewModel : ViewModel() {
                 clickToAction(ac)
             }
             listCl.setOnClickListener {
-                if(openServerState.value == OpenServiceState.DISCONNECTING) {
+                if (openServerState.value == OpenServiceState.DISCONNECTING) {
                     stopToConnectOrDisConnect()
                     return@setOnClickListener
                 }
@@ -438,7 +441,15 @@ class MainViewModel : ViewModel() {
 
                 }
 
+                OpenServiceState.CONNECTED -> {
+                    openServerState.postValue(OpenServiceState.CONNECTED)
+                }
+
                 else -> {}
+            }
+        } else {
+            if (openServerState.value == OpenServiceState.DISCONNECTED) {
+                openServerState.postValue(OpenServiceState.DISCONNECTED)
             }
         }
 
@@ -467,7 +478,7 @@ class MainViewModel : ViewModel() {
 
     private var toAction = false
 
-    private fun isNextConnect(activity: HomeActivity, nextFun: (haveData:Boolean) -> Unit) {
+    private fun isNextConnect(activity: HomeActivity, nextFun: (haveData: Boolean) -> Unit) {
         activity.lifecycleScope.launch {
             activity.mBinding.inLoad.tvLoading.text = "The server is loading"
             val data = OnlineVpnHelp.checkServerData(activity)
@@ -596,10 +607,6 @@ class MainViewModel : ViewModel() {
 
     private val mCallback = object : IOpenVPNStatusCallback.Stub() {
         override fun newStatus(uuid: String?, state: String?, message: String?, level: String?) {
-            // NOPROCESS 未连接 // CONNECTED 已连接
-            // RECONNECTING 尝试重新链接 // EXITING 连接中主动掉用断开
-            Log.e(TAG, "newStatus: ${state}")
-
             curServerState = state
             BaseAppFlash.vpnState = state ?: ""
             when (state) {
@@ -649,7 +656,6 @@ class MainViewModel : ViewModel() {
                         runCatching {
                             BaseAppUtils.setLoadData(BaseAppUtils.vpn_ip, data.onLm_host)
                             BaseAppUtils.setLoadData(BaseAppUtils.vpn_city, data.city)
-                            Log.e(TAG, "openVTool: ip=${data.onLm_host};city=${data.city}")
                             val conf = context.assets.open("fast_ippooltest.ovpn")
                             val br = BufferedReader(InputStreamReader(conf))
                             val config = StringBuilder()
@@ -668,7 +674,6 @@ class MainViewModel : ViewModel() {
                             }
                             br.close()
                             conf.close()
-                            Log.e("TAG", "openVTool=$config")
                             server.startVPN(config.toString())
                             delay(12000)
                             if ((!DataHelp.isConnectFun()) && BaseAppFlash.vpnClickState == 0) {
@@ -688,7 +693,6 @@ class MainViewModel : ViewModel() {
                                 cancel()
                             }
                         }.onFailure {
-                            Log.e("open vpn error", it.message.toString())
                         }
                     } else {
                         stopToConnectOrDisConnect()

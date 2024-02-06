@@ -30,7 +30,6 @@ object OnlineVpnHelp {
             val spinVpnBean = Gson().fromJson(data, OnlineVpnBean::class.java)
             val data = spinVpnBean.data.BDQkmnzDYM
             val data2 = data.distinctBy { it.VUjGPZr }
-            Log.e(TAG,"data=${data}")
             if (data2.isNotEmpty()) {
                 data2.map {
                     LocaleProfile().apply {

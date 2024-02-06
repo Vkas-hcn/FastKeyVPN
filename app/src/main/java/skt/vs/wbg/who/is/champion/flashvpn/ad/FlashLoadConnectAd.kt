@@ -86,7 +86,6 @@ object FlashLoadConnectAd {
 
                 override fun onAdFailedToShowFullScreenContent(p0: AdError) {
                     // Called when ad fails to show.
-                    Log.d(logTagFlash, "Ad failed to show fullscreen content.")
                     adBase.appAdDataFlash = null
                     adBase.whetherToShowFlash = false
                 }
@@ -99,7 +98,6 @@ object FlashLoadConnectAd {
                     adBase.appAdDataFlash = null
                     // Called when ad is shown.
                     adBase.whetherToShowFlash = true
-                    Log.d(logTagFlash, "connect----show")
                     adBackData = adBase.afterLoadLink(adBackData)
                 }
             }

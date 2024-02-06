@@ -38,7 +38,6 @@ object FlashLoadOpenAd {
                     adBase.appAdDataFlash = ad
                     adBase.loadTimeFlash = Date().time
                     ad.setOnPaidEventListener { adValue ->
-                        Log.e(TAG, "App open ads start reporting")
                         adValue.let {
                             FlashOkHttpUtils().getAdList(
                                 context,

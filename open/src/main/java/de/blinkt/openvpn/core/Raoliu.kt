@@ -13,7 +13,6 @@ object Raoliu {
 
     private fun getFlowData(): Boolean {
         val data = mmkv.decodeBool("raoliu", true)
-        Log.e("TAG", "getAroundFlowJsonData: ${data}")
         return data
     }
 

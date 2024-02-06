@@ -81,18 +81,14 @@ class BaseAd private constructor() {
     fun advertisementLoadingFlash(context: Context) {
 
         if (isLoadingFlash) {
-            Log.d(TAG, "${getInstanceName()}-广告加载中，不能再次加载")
             return
         }
         val userData = BaseAppUtils.blockAdUsers()
         val blacklistState = BaseAppUtils.blockAdBlacklist()
         if (!blacklistState && (instanceName == "connect" || instanceName == "back")) {
-            Log.e(TAG, "${instanceName}-黑名单屏蔽: ", )
             return
         }
         if (!userData && (instanceName == "connect" || instanceName == "back" || instanceName == "banner")) {
-            Log.e(TAG, "${instanceName}-买量屏蔽", )
-
             return
         }
         when (appAdDataFlash) {
@@ -114,7 +110,6 @@ class BaseAd private constructor() {
         if (DataHelp.isConnectFun() && !raolui) {
             DataHelp.putPointTimeYep("f32", getID(adData), "yn", context)
         }
-        Log.d(TAG, "${getInstanceName()}-广告-开始加载")
         adLoaders[id]?.invoke(context, adData)
     }
 

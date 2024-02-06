@@ -814,7 +814,6 @@ public class ConfigParser {
         checkIgnoreAndInvalidOptions(np);
         fixup(np);
         String data = GsonUtils.toJson(np);
-        Log.e("TAG", "convertProfile=" + data);
         return np;
     }
 

@@ -114,7 +114,6 @@ open class FlashCloak {
         val client = NetClientHelp()
         client.getMap("https://trypsin.fastkeyconnection.com/magnet/skid/frisian",DataHelp.cloakMapData(BaseAppFlash.getInstance()),object :NetClientHelp.Callback{
             override fun onSuccess(response: String) {
-                Log.e(TAG, "黑名单= ${response}", )
                 when (response) {
                     "melville" -> {
                         SPUtils.getInstance().put(IS_HAVE_GET_CLOAK, true)
@@ -136,7 +135,6 @@ open class FlashCloak {
             }
 
             override fun onFailure(error: String) {
-                Log.e(TAG, "黑名单获取失败2= ${error}")
             }
         })
     }

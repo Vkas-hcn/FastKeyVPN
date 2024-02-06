@@ -128,7 +128,7 @@ class BaseAppFlash : Application(), Application.ActivityLifecycleCallbacks {
         handler = Handler(Looper.getMainLooper())
         val runnable = object : Runnable {
             override fun run() {
-                SPUtils.getInstance().put(BaseAppUtils.refer_data, "fb4a")
+//                SPUtils.getInstance().put(BaseAppUtils.refer_data, "fb4a")
                 if (SPUtils.getInstance().getString(BaseAppUtils.refer_data).isNullOrEmpty()) {
                     getInstallReferrer(context)
                     handler?.postDelayed(this, delayMillis)

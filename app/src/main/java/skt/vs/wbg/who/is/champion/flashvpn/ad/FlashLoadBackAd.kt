@@ -47,8 +47,6 @@ object FlashLoadBackAd {
                         """
            domain: ${adError.domain}, code: ${adError.code}, message: ${adError.message}
           """"
-                    Log.d(TAG, "back广告加载失败:$error ")
-
                     DataHelp.putPointTimeYep(
                         "f31",
                         error,
@@ -61,7 +59,6 @@ object FlashLoadBackAd {
                     adBase.loadTimeFlash = Date().time
                     adBase.isLoadingFlash = false
                     adBase.appAdDataFlash = interstitialAd
-                    Log.d(TAG, "back广告加载成功: ")
                     interstitialAd.setOnPaidEventListener { adValue ->
                         FlashOkHttpUtils().getAdList(
                             context,
@@ -95,7 +92,6 @@ object FlashLoadBackAd {
 
                 override fun onAdFailedToShowFullScreenContent(p0: AdError) {
                     // Called when ad fails to show.
-                    Log.d(logTagFlash, "Ad failed to show fullscreen content.")
                     adBase.appAdDataFlash = null
                     adBase.whetherToShowFlash = false
                 }
@@ -108,7 +104,6 @@ object FlashLoadBackAd {
                     adBase.appAdDataFlash = null
                     // Called when ad is shown.
                     adBase.whetherToShowFlash = true
-                    Log.d(logTagFlash, "back----show")
                     adBackData = adBase.afterLoadLink(adBackData)
                 }
             }

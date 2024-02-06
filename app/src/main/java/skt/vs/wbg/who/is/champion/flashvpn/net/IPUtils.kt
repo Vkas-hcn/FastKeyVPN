@@ -58,8 +58,6 @@ object IPUtils {
             override fun onResponse(call: Call<KKKKKK>, response: Response<KKKKKK>) {
                 if (response.isSuccessful) {
                     val data: KKKKKK? = response.body()
-                    Log.e("okhttp", "sus ${data?.country_code}")
-
                     isShowBandedDialog = checkIpIsBanded(data?.country_code?.lowercase())
                     if (isShowBandedDialog && activity !is ProgressActivity) {
                         showDialog(activity)
@@ -78,8 +76,6 @@ object IPUtils {
 
             override fun onFailure(call: Call<KKKKKK>, t: Throwable) {
                 setIsBanded(activity)
-                Log.e("okhttp", t.message.toString())
-
             }
 
         })
@@ -120,7 +116,6 @@ object IPUtils {
     }
 
     fun checkIpIsBanded(string: String?): Boolean {
-        Log.e("okhttp banded", "checkIpIsBanded")
         return if (string.isNullOrEmpty()) {
             checkIpIsBandedForLanguage()
         } else {
@@ -132,7 +127,6 @@ object IPUtils {
     }
 
     private fun checkIpIsBandedForLanguage(): Boolean {
-        Log.e("okhttp banded", "checkIpIsBandedForLanguage")
         return when (Locale.getDefault().language.toLowerCase()) {
             "zh", "fa" -> true
 

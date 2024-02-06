@@ -132,7 +132,6 @@ public class ConfirmDialog extends Activity implements
             mAlert.show();
 
         } catch (Exception e) {
-            Log.e(TAG, "onResume", e);
             finish();
         }
     }
