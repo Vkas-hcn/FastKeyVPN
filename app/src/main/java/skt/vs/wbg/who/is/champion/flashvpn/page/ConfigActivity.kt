@@ -51,11 +51,13 @@ class ConfigActivity : BaseActivityFlash<ListLayoutBinding>() {
             mBinding.llRecently.visibility = View.VISIBLE
             mBinding.tvService.visibility = View.VISIBLE
             mBinding.locationList.visibility = View.VISIBLE
+            mBinding.tvNoData.visibility = View.GONE
         } else {
             mBinding.tvRecently.visibility = View.GONE
             mBinding.llRecently.visibility = View.GONE
             mBinding.tvService.visibility = View.GONE
             mBinding.locationList.visibility = View.GONE
+            mBinding.tvNoData.visibility = View.VISIBLE
         }
         dataList = VPNDataHelper.getAllVpnListData()
         val lm = LinearLayoutManager(this)

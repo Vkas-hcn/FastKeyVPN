@@ -9,9 +9,6 @@ import skt.vs.wbg.who.`is`.champion.flashvpn.utils.BaseAppUtils.TAG
 import skt.vs.wbg.who.`is`.champion.flashvpn.utils.BaseAppUtils.getLoadStringData
 
 object OnlineVpnHelp {
-    /**
-     * 检查是否有下发服务器数据
-     */
     fun checkServerData(context: Context): Boolean {
         val data = getDataFromTheServer()
         return if (data == null) {
@@ -21,9 +18,7 @@ object OnlineVpnHelp {
             true
         }
     }
-    /**
-     * 获取下发服务器数据
-     */
+
      fun getDataFromTheServer(): MutableList<LocaleProfile>? {
         val data = BaseAppUtils.vpn_online.getLoadStringData()
         return runCatching {
