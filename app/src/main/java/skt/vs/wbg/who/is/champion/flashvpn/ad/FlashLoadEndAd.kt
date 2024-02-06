@@ -148,7 +148,6 @@ object FlashLoadEndAd {
                 it
         }
         adView.mediaView?.clipToOutline = true
-        adView.mediaView?.outlineProvider = R8()
         if (nativeAd.body == null) {
             adView.bodyView?.visibility = View.INVISIBLE
         } else {
