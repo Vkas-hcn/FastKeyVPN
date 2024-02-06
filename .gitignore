@@ -1,0 +1,4 @@
+# Project exclude paths
+/.gradle/
+/open/build/
+/open/build/intermediates/javac/skeletonOvpn23Debug/classes/
