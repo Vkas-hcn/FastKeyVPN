@@ -37,7 +37,7 @@ import skt.vs.wbg.who.`is`.champion.flashvpn.utils.BaseAppUtils.logTagFlash
 import java.util.Date
 
 object FlashLoadBannerAd {
-    private val adBase = BaseAd.getHomeInstance()
+    private val adBase = BaseAd.getBannerInstance()
     private var isLoadSuccess: Boolean = false
     private lateinit var adBackData: FlashAdBean
 
@@ -49,7 +49,7 @@ object FlashLoadBannerAd {
         val screenWidth = displayMetrics.widthPixels
         val screenWidthDp = screenWidth / displayMetrics.density
         adBase.adView = AdView(context).apply {
-            adUnitId = adData.onhhhh
+            adUnitId = adData.faSlity
             setAdSize(
                 AdSize.getCurrentOrientationAnchoredAdaptiveBannerAdSize(
                     context,
@@ -77,7 +77,7 @@ object FlashLoadBannerAd {
                 }
                 DataHelp.putPointTimeYep(
                     "f30",
-                    "banner+${adData.onhhhh}",
+                    "banner+${adData.faSlity}",
                     "yn",
                     context
                 )

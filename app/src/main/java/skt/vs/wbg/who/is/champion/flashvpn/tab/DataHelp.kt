@@ -339,7 +339,7 @@ object DataHelp {
             }
 
             "banner" -> {
-                adType = AdType(adData.onhhhh, "back", "onhhhh", "banner")
+                adType = AdType(adData.faSlity, "back", "faSlity", "banner")
             }
         }
         return adType

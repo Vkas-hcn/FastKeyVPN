@@ -52,11 +52,10 @@ object BaseAppUtils {
     const val local_ad_data = """
 {
   "faSdif":"ca-app-pub-3940256099942544/9257395921",
-  "faSlity":"ca-app-pub-3940256099942544/2247696110",
+  "faSlity":"ca-app-pub-3940256099942544/6300978111",
   "faSpla":"ca-app-pub-3940256099942544/2247696110",
   "faSity":"ca-app-pub-3940256099942544/8691691433",
-  "faSmay":"ca-app-pub-3940256099942544/8691691433",
-  "onhhhh":"ca-app-pub-3940256099942544/6300978111"
+  "faSmay":"ca-app-pub-3940256099942544/8691691433"
 }
     """
 

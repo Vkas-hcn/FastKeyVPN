@@ -8,7 +8,6 @@ data class FlashAdBean(
     val faSpla: String,
     val faSity: String,
     val faSmay: String,
-    val onhhhh:String,
     var loadCity: String,
     var showTheCity: String,
 

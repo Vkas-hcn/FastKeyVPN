@@ -7,14 +7,12 @@ import skt.vs.wbg.who.`is`.champion.flashvpn.ad.FlashLoadBackAd
 import skt.vs.wbg.who.`is`.champion.flashvpn.ad.FlashLoadBannerAd
 import skt.vs.wbg.who.`is`.champion.flashvpn.ad.FlashLoadConnectAd
 import skt.vs.wbg.who.`is`.champion.flashvpn.ad.FlashLoadEndAd
-import skt.vs.wbg.who.`is`.champion.flashvpn.ad.FlashLoadHomeAd
 import skt.vs.wbg.who.`is`.champion.flashvpn.ad.FlashLoadOpenAd
 import skt.vs.wbg.who.`is`.champion.flashvpn.data.FlashAdBean
 import skt.vs.wbg.who.`is`.champion.flashvpn.tab.DataHelp
 import skt.vs.wbg.who.`is`.champion.flashvpn.utils.BaseAppUtils
 import skt.vs.wbg.who.`is`.champion.flashvpn.utils.BaseAppUtils.TAG
 import skt.vs.wbg.who.`is`.champion.flashvpn.utils.BaseAppUtils.getLoadStringData
-import skt.vs.wbg.who.`is`.champion.flashvpn.utils.BaseAppUtils.logTagFlash
 import java.util.Date
 
 class BaseAd private constructor() {
@@ -22,22 +20,21 @@ class BaseAd private constructor() {
         private val instanceHelper = InstanceHelper
 
         fun getOpenInstance() = instanceHelper.openLoadFlash
-        fun getHomeInstance() = instanceHelper.homeLoadFlash
+        fun getBannerInstance() = instanceHelper.bannerLoadFlash
         fun getEndInstance() = instanceHelper.resultLoadFlash
         fun getConnectInstance() = instanceHelper.connectLoadFlash
         fun getBackInstance() = instanceHelper.backLoadFlash
 
-        fun getBannerInstance() = instanceHelper.bannerLoadFlash
+
         private var idCounter = 0
     }
 
     object InstanceHelper {
         val openLoadFlash = BaseAd()
-        val homeLoadFlash = BaseAd()
+        val bannerLoadFlash = BaseAd()
         val resultLoadFlash = BaseAd()
         val connectLoadFlash = BaseAd()
         val backLoadFlash = BaseAd()
-        val bannerLoadFlash = BaseAd()
     }
 
     private val id = generateId()
@@ -52,22 +49,20 @@ class BaseAd private constructor() {
     private fun getInstanceName(): String {
         return when (id) {
             1 -> "open"
-            2 -> "home"
+            2 -> "banner"
             3 -> "end"
             4 -> "connect"
             5 -> "back"
-            6 -> "banner"
             else -> ""
         }
     }
     fun getID(adBean: FlashAdBean): String {
         return when (id) {
             1 -> "open+${adBean.faSdif}"
-            2 -> "home+${adBean.faSlity}"
+            2 -> "banner+${adBean.faSlity}"
             3 -> "end+${adBean.faSpla}"
             4 -> "connect+${adBean.faSity}"
             5 -> "back+${adBean.faSmay}"
-            6 -> "banner+${adBean.onhhhh}"
             else -> ""
         }
     }
@@ -133,7 +128,7 @@ class BaseAd private constructor() {
         }
 
         adLoadersMap[2] = { context, adData ->
-            FlashLoadHomeAd.loadHomeAdvertisementFlash(context, adData)
+            FlashLoadBannerAd.loadBannerAdFlash(context, adData)
         }
 
         adLoadersMap[3] = { context, adData ->
@@ -147,9 +142,7 @@ class BaseAd private constructor() {
         adLoadersMap[5] = { context, adData ->
             FlashLoadBackAd.loadBackAdvertisementFlash(context, adData)
         }
-        adLoadersMap[6] = { context, adData ->
-            FlashLoadBannerAd.loadBannerAdFlash(context, adData)
-        }
+
         return adLoadersMap
     }
     fun beforeLoadLink(yepAdBean: FlashAdBean): FlashAdBean {

@@ -54,7 +54,6 @@ import kotlinx.coroutines.withTimeout
 import skt.vs.wbg.who.`is`.champion.flashvpn.R
 import skt.vs.wbg.who.`is`.champion.flashvpn.ad.FlashLoadBannerAd
 import skt.vs.wbg.who.`is`.champion.flashvpn.ad.FlashLoadConnectAd
-import skt.vs.wbg.who.`is`.champion.flashvpn.ad.FlashLoadHomeAd
 import skt.vs.wbg.who.`is`.champion.flashvpn.base.BaseAd
 import skt.vs.wbg.who.`is`.champion.flashvpn.base.BaseAppFlash
 import skt.vs.wbg.who.`is`.champion.flashvpn.base.BaseAppFlash.Companion.isUserMainBack
@@ -707,27 +706,6 @@ class MainViewModel : ViewModel() {
         return null
     }
 
-
-    fun showHomeAd(activity: HomeActivity) {
-        activity.lifecycleScope.launch {
-            delay(200)
-            if (activity.lifecycle.currentState != Lifecycle.State.RESUMED) {
-                return@launch
-            }
-            val adHomeData = BaseAd.getHomeInstance().appAdDataFlash
-            if (adHomeData == null) {
-                BaseAd.getHomeInstance().advertisementLoadingFlash(activity)
-            }
-            while (isActive) {
-                if (adHomeData != null) {
-                    FlashLoadHomeAd.setDisplayHomeNativeAdFlash(activity)
-                    cancel()
-                    break
-                }
-                delay(500)
-            }
-        }
-    }
 
     fun showBannerAd(activity: HomeActivity) {
         activity.lifecycleScope.launch {
