@@ -16,7 +16,7 @@ class NetClientHelp {
 
     fun get(context: Context, url: String, callback: Callback) {
         val request = Request.Builder()
-            .addHeader("XRAY", "com.fast.key.vpn.helper")
+            .addHeader("XRAY", context.packageName)
             .addHeader("JJI", "ZZ")
             .url(url)
             .build()
