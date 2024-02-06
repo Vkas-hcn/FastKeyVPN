@@ -94,7 +94,6 @@ class BaseAppFlash : Application(), Application.ActivityLifecycleCallbacks {
         }
 
         isHotStart = true
-        BaseAd.getHomeInstance().whetherToShowFlash = false
         BaseAd.getEndInstance().whetherToShowFlash = false
     }
 
