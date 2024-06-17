@@ -84,7 +84,8 @@ object FlashLoadBannerAd {
             }
 
             override fun onAdFailedToLoad(adError: LoadAdError) {
-                // Code to be executed when an ad request fails.
+                adBase.isLoadingFlash = false
+                adBase.appAdDataFlash = null
                 isLoadSuccess = false
                 val error =
                     """

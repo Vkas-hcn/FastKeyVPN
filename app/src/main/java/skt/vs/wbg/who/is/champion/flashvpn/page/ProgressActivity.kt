@@ -66,7 +66,7 @@ class ProgressActivity : BaseActivityFlash<ProgressLayoutBinding>() {
                 if (progressInt != 100) {
                     mBinding.flashProgressBar.progress = i
                 }
-                delay(120)
+                delay(140)
             }
         }
         onBackPressedDispatcher.addCallback(this, object : OnBackPressedCallback(true) {

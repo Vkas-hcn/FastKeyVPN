@@ -79,8 +79,8 @@ class BaseAd private constructor() {
         Date().time - loadTime < 60 * 60 * 1000
 
     fun advertisementLoadingFlash(context: Context) {
-
         if (isLoadingFlash) {
+            Log.e(TAG, "${instanceName}广告，上一个广告加载中: ")
             return
         }
         val userData = BaseAppUtils.blockAdUsers()
