@@ -60,7 +60,7 @@ object FlashLoadBannerAd {
         }
         adBase.adView?.adListener = object : AdListener() {
             override fun onAdLoaded() {
-                // Code to be executed when an ad finishes loading.
+                Log.e(TAG, "banner广告，加载成功")
                 isLoadSuccess = true
                 adBase.adView?.setOnPaidEventListener {
                     adBase.adView?.responseInfo.let { res ->
@@ -90,6 +90,7 @@ object FlashLoadBannerAd {
                     """
            domain: ${adError.domain}, code: ${adError.code}, message: ${adError.message}
           """"
+                Log.e(TAG, "banner广告，加载失败${error}")
                 DataHelp.putPointTimeYep(
                     "f31",
                     error,
@@ -123,6 +124,7 @@ object FlashLoadBannerAd {
     fun showBannerAdFlash(activity: HomeActivity) {
         val userData = BaseAppUtils.blockAdUsers()
         if (!userData) {
+            Log.e(TAG, "买量屏蔽banner-插屏")
             return
         }
         val state = activity.lifecycle.currentState == Lifecycle.State.RESUMED

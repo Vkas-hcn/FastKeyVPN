@@ -1,5 +1,6 @@
 package skt.vs.wbg.who.`is`.champion.flashvpn.base
 
+import android.annotation.SuppressLint
 import android.app.Activity
 import android.app.Application
 import android.content.Intent
@@ -25,6 +26,9 @@ import skt.vs.wbg.who.`is`.champion.flashvpn.utils.BaseAppUtils.getLoadBooleanDa
 import android.content.Context
 import android.os.Handler
 import android.os.Looper
+import android.provider.Settings
+import com.adjust.sdk.Adjust
+import com.adjust.sdk.AdjustConfig
 
 class BaseAppFlash : Application(), Application.ActivityLifecycleCallbacks {
 
@@ -59,6 +63,7 @@ class BaseAppFlash : Application(), Application.ActivityLifecycleCallbacks {
         BaseAppUtils.initApp(this)
         registerActivityLifecycleCallbacks(this)
         getReferInformation(this)
+        initAdJust(this)
     }
 
 
@@ -98,11 +103,11 @@ class BaseAppFlash : Application(), Application.ActivityLifecycleCallbacks {
     }
 
     override fun onActivityResumed(activity: Activity) {
-
+        Adjust.onResume()
     }
 
     override fun onActivityPaused(activity: Activity) {
-
+        Adjust.onPause()
     }
 
     override fun onActivityStopped(activity: Activity) {
@@ -121,59 +126,55 @@ class BaseAppFlash : Application(), Application.ActivityLifecycleCallbacks {
         acFlashList.remove(activity)
     }
 
-    private var handler: Handler? = null
-    private val delayMillis: Long = 5000
-    private fun getReferInformation(context: Context) {
-        handler?.removeCallbacksAndMessages(null)
-        handler = Handler(Looper.getMainLooper())
-        val runnable = object : Runnable {
-            override fun run() {
-//                SPUtils.getInstance().put(BaseAppUtils.refer_data, "fb4a")
+
+
+    fun getReferInformation(context: Context) {
+        referJobFlash?.cancel()
+        referJobFlash = GlobalScope.launch {
+            while (isActive) {
                 if (SPUtils.getInstance().getString(BaseAppUtils.refer_data).isNullOrEmpty()) {
-                    getInstallReferrer(context)
-                    handler?.postDelayed(this, delayMillis)
+                    getReferrerData(context)
                 } else {
                     cancel()
+                    referJobFlash = null
                 }
+                delay(5000)
             }
         }
-        handler?.postDelayed(runnable, delayMillis)
     }
 
-    fun cancel() {
-        handler?.removeCallbacksAndMessages(null)
-        handler = null
-    }
-
-    private fun handleInstallReferrerOK(context: Context, installReferrer: String, date: Long,referrerClient: InstallReferrerClient) {
-        SPUtils.getInstance().put(BaseAppUtils.refer_data, installReferrer)
-        val loadDate = (System.currentTimeMillis() - date) / 1000
-        DataHelp.putPointTimeYep("f4", loadDate.toInt(), "conntime", context)
-        if (!BaseAppUtils.refer_tab.getLoadBooleanData()) {
-            runCatching {
-                referrerClient.installReferrer?.run {
-                    FlashOkHttpUtils().getInstallList(context, this)
-                }
-            }.exceptionOrNull()
-        }
-    }
-
-    private fun getInstallReferrer(context: Context) {
+    private fun getReferrerData(context: Context) {
+        var installReferrer = ""
         val referrer = SPUtils.getInstance().getString(BaseAppUtils.refer_data)
         if (referrer.isNotBlank()) {
             return
         }
         val date = System.currentTimeMillis()
-        val referrerClient = InstallReferrerClient.newBuilder(context).build()
 
-        try {
+//        installReferrer = "not%20set"
+//        installReferrer = "fb4a"
+//        SPUtils.getInstance().put(BaseAppUtils.refer_data,installReferrer)
+
+        runCatching {
+            val referrerClient = InstallReferrerClient.newBuilder(context).build()
             referrerClient.startConnection(object : InstallReferrerStateListener {
-                override fun onInstallReferrerSetupFinished(responseCode: Int) {
-                    when (responseCode) {
+                override fun onInstallReferrerSetupFinished(p0: Int) {
+                    when (p0) {
                         InstallReferrerClient.InstallReferrerResponse.OK -> {
                             val installReferrer =
                                 referrerClient.installReferrer.installReferrer ?: ""
-                            handleInstallReferrerOK(context, installReferrer, date,referrerClient)
+                            SPUtils.getInstance().put(BaseAppUtils.refer_data, installReferrer)
+                            Log.e(BaseAppUtils.TAG, "onInstallReferrerSetupFinished: ${installReferrer}")
+                            val loadDate = (System.currentTimeMillis() - date) / 1000
+                            DataHelp.putPointTimeYep("f4", loadDate.toInt(), "conntime", context)
+
+                            if (!BaseAppUtils.refer_tab.getLoadBooleanData()) {
+                                runCatching {
+                                    referrerClient?.installReferrer?.run {
+                                        FlashOkHttpUtils().getInstallList(context, this)
+                                    }
+                                }.exceptionOrNull()
+                            }
                         }
                     }
                     referrerClient.endConnection()
@@ -182,11 +183,34 @@ class BaseAppFlash : Application(), Application.ActivityLifecycleCallbacks {
                 override fun onInstallReferrerServiceDisconnected() {
                 }
             })
-        } catch (e: Exception) {
+        }.onFailure { e ->
             // 处理异常
         }
     }
 
+    @SuppressLint("HardwareIds")
+    private fun initAdJust(application: Application) {
+        Adjust.addSessionCallbackParameter(
+            "customer_user_id",
+            Settings.Secure.getString(application.contentResolver, Settings.Secure.ANDROID_ID)
+        )
+        val appToken = "ih2pm2dr3k74"
+        val environment: String = AdjustConfig.ENVIRONMENT_SANDBOX
+        val config = AdjustConfig(application, appToken, environment)
+        config.needsCost = true
+        config.setOnAttributionChangedListener { attribution ->
+            Log.e("TAG", "adjust=${attribution}")
+            val data = BaseAppUtils.adjust_data.getLoadBooleanData()
+            if (!data && attribution.network.isNotEmpty() && attribution.network.contains(
+                    "organic",
+                    true
+                ).not()
+            ) {
+                BaseAppUtils.setLoadData(BaseAppUtils.adjust_data, true)
+            }
+        }
+        Adjust.onCreate(config)
+    }
 
 
 }

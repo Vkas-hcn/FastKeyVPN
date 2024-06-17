@@ -85,10 +85,12 @@ class BaseAd private constructor() {
         }
         val userData = BaseAppUtils.blockAdUsers()
         val blacklistState = BaseAppUtils.blockAdBlacklist()
-        if (!blacklistState && (instanceName == "connect" || instanceName == "back")) {
+        if (blacklistState && (instanceName == "connect" || instanceName == "back")) {
+            Log.e(TAG, "${instanceName}广告，黑名单屏蔽: ")
             return
         }
         if (!userData && (instanceName == "connect" || instanceName == "back" || instanceName == "banner")) {
+            Log.e(TAG, "${instanceName}广告，买量屏蔽: ")
             return
         }
         when (appAdDataFlash) {
@@ -105,6 +107,7 @@ class BaseAd private constructor() {
 
 
     private fun loadStartupPageAdvertisementFlash(context: Context, adData: FlashAdBean) {
+        Log.e(TAG, "${instanceName}广告，开始加载")
         DataHelp.putPointTimeYep("f29", getID(adData), "yn", context)
         val raolui = BaseAppFlash.mmkvFlash.getBoolean("raoliu", false)
         if (DataHelp.isConnectFun() && !raolui) {

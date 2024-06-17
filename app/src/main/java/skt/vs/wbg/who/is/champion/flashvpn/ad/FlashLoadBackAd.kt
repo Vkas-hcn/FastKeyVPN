@@ -47,6 +47,7 @@ object FlashLoadBackAd {
                         """
            domain: ${adError.domain}, code: ${adError.code}, message: ${adError.message}
           """"
+                    Log.e(TAG, "back广告，加载失败${error}")
                     DataHelp.putPointTimeYep(
                         "f31",
                         error,
@@ -56,6 +57,7 @@ object FlashLoadBackAd {
                 }
 
                 override fun onAdLoaded(interstitialAd: InterstitialAd) {
+                    Log.e(TAG, "back广告，加载完成")
                     adBase.loadTimeFlash = Date().time
                     adBase.isLoadingFlash = false
                     adBase.appAdDataFlash = interstitialAd
@@ -117,10 +119,12 @@ object FlashLoadBackAd {
     ): Int {
         val userData = BaseAppUtils.blockAdUsers()
         val blacklistState = BaseAppUtils.blockAdBlacklist()
-        if (!blacklistState) {
+        if (blacklistState) {
+            Log.e(TAG, "黑名单屏蔽back-插屏")
             return 0
         }
         if (!userData) {
+            Log.e(TAG, "买量屏蔽back-插屏")
             return 0
         }
 

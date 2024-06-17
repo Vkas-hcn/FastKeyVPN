@@ -21,6 +21,7 @@ import skt.vs.wbg.who.`is`.champion.flashvpn.page.HomeActivity
 import skt.vs.wbg.who.`is`.champion.flashvpn.tab.DataHelp
 import skt.vs.wbg.who.`is`.champion.flashvpn.tab.FlashOkHttpUtils
 import skt.vs.wbg.who.`is`.champion.flashvpn.utils.BaseAppUtils
+import skt.vs.wbg.who.`is`.champion.flashvpn.utils.BaseAppUtils.TAG
 import skt.vs.wbg.who.`is`.champion.flashvpn.utils.BaseAppUtils.logTagFlash
 import java.util.Date
 
@@ -42,6 +43,7 @@ object FlashLoadConnectAd {
                         """
            domain: ${adError.domain}, code: ${adError.code}, message: ${adError.message}
           """"
+                    Log.e(TAG, "connect广告，加载失败${error}")
                     DataHelp.putPointTimeYep(
                         "f31",
                         error,
@@ -51,6 +53,7 @@ object FlashLoadConnectAd {
                 }
 
                 override fun onAdLoaded(interstitialAd: InterstitialAd) {
+                    Log.e(TAG, "connect广告，加载成功")
                     adBase.loadTimeFlash = Date().time
                     adBase.isLoadingFlash = false
                     adBase.appAdDataFlash = interstitialAd
@@ -110,10 +113,12 @@ object FlashLoadConnectAd {
     ): Int {
         val userData = BaseAppUtils.blockAdUsers()
         val blacklistState = BaseAppUtils.blockAdBlacklist()
-        if (!blacklistState) {
+        if (blacklistState) {
+            Log.e(TAG, "黑名单屏蔽connect-插屏")
             return 0
         }
         if (!userData) {
+            Log.e(TAG, "买量屏蔽connect-插屏")
             return 0
         }
 

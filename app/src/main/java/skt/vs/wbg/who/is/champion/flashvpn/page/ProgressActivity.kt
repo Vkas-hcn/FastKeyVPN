@@ -129,12 +129,12 @@ class ProgressActivity : BaseActivityFlash<ProgressLayoutBinding>() {
         identificationOfBuyingVolume()
     }
     private fun identificationOfBuyingVolume() {
-        if(BaseAppUtils.refer_tab.getLoadBooleanData()){
+        if(BaseAppUtils.refer_state.getLoadBooleanData()){
             return
         }
         if (BaseAppUtils.refer_data.getLoadStringData().isNotEmpty() && BaseAppUtils.isItABuyingUser()) {
             "f3".putPointYep(this)
-            BaseAppUtils.setLoadData(BaseAppUtils.refer_tab, true)
+            BaseAppUtils.setLoadData(BaseAppUtils.refer_state, true)
         }
     }
     //等待展示open广告
@@ -151,7 +151,6 @@ class ProgressActivity : BaseActivityFlash<ProgressLayoutBinding>() {
         }
     }
     private fun loadOpenAd() {
-
         jobOpenAdsFlash?.cancel()
         jobOpenAdsFlash = null
         jobOpenAdsFlash = lifecycleScope.launch {

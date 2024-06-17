@@ -74,6 +74,8 @@ object FlashLoadEndAd {
                     """
            domain: ${loadAdError.domain}, code: ${loadAdError.code}, message: ${loadAdError.message}
           """"
+                Log.e(TAG, "end广告，加载失败${error}")
+
                 DataHelp.putPointTimeYep(
                     "f31",
                     error,
@@ -84,6 +86,7 @@ object FlashLoadEndAd {
 
             override fun onAdLoaded() {
                 super.onAdLoaded()
+                Log.e(TAG, "end广告，加载成功")
                 adBase.loadTimeFlash = Date().time
                 adBase.isLoadingFlash = false
                 DataHelp.putPointTimeYep(

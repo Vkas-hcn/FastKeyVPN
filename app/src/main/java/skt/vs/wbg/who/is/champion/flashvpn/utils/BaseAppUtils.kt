@@ -20,6 +20,7 @@ import skt.vs.wbg.who.`is`.champion.flashvpn.net.FlashCloak
 import skt.vs.wbg.who.`is`.champion.flashvpn.page.SPUtils
 import skt.vs.wbg.who.`is`.champion.flashvpn.page.VPNDataHelper.initVpnFb
 import skt.vs.wbg.who.`is`.champion.flashvpn.tab.DataHelp.putPointYep
+import skt.vs.wbg.who.`is`.champion.flashvpn.utils.BaseAppUtils.getLoadBooleanData
 import skt.vs.wbg.who.`is`.champion.flashvpn.utils.BaseAppUtils.getLoadStringData
 
 object BaseAppUtils {
@@ -30,7 +31,7 @@ object BaseAppUtils {
     const val ip_tab_flash = "ip_tab_flash"
     const val refer_tab = "refer_tab"
     const val refer_state = "refer_state"
-
+    const val adjust_data = "adjust_data"
     const val logTagFlash = "FlashVPN"
     const val vpn_ip = "vpn_ip"
     const val vpn_city = "vpn_city"
@@ -75,9 +76,9 @@ object BaseAppUtils {
     //本地广告逻辑
     const val local_ad_logic = """
 {
-    "faScorp": "1",
-    "faSekin": "2",
-    "faSsap": "2"
+    "faScorp": "2",
+    "faSekin": "1",
+    "faSsap": "1"
 }    """
 
     fun initApp(application: Application) {
@@ -177,46 +178,89 @@ object BaseAppUtils {
             fromLogicJson(dataJson)
         }.getOrNull() ?: fromLogicJson(local_ad_logic)
     }
+
     private fun isFacebookUser(): Boolean {
         val data = getUserJson()
         val referrer = SPUtils.getInstance().getString(refer_data)
         val pattern = "fb4a|facebook".toRegex(RegexOption.IGNORE_CASE)
-        return pattern.containsMatchIn(referrer) && data.faSment == "1"
+        return (pattern.containsMatchIn(referrer) && data.faSment == "1")
     }
 
     fun isItABuyingUser(): Boolean {
         val data = getUserJson()
         val referrer = SPUtils.getInstance().getString(refer_data)
-        val conditions = listOf(
-            { isFacebookUser() },
-            { data.faSunt == "1" && referrer.contains("gclid", true) },
-            { data.faSlite == "1" && referrer.contains("not%20set", true) },
-            { data.faSand == "1" && referrer.contains("youtubeads", true) },
-            { data.faSroit == "1" && referrer.contains("%7B%22", true) },
-            { data.faSog == "1" && referrer.contains("adjust", true) },
-            { data.faSbre == "1" && referrer.contains("bytedance", true) }
-        )
-        return conditions.any { it() }
+        return isFacebookUser()
+                || (data.faSunt == "1" && referrer.contains("gclid", true))
+                || (data.faSlite == "1" && referrer.contains("not%20set", true))
+                || (data.faSand == "1" && referrer.contains(
+            "youtubeads",
+            true
+        ))
+                || (data.faSroit == "1" && referrer.contains("%7B%22", true))
+                || (data.faSog == "1" && referrer.contains("adjust", true))
+                || (data.faSbre == "1" && referrer.contains("bytedance", true))
+                || adjust_data.getLoadBooleanData()
     }
+
 
     fun blockAdUsers(): Boolean {
         val data = getLogicJson().faScorp
-        return when (data) {
-            "1" -> true
-            "2" -> isItABuyingUser()
-            "3" -> false
-            else -> true
+        when (data) {
+            "1" -> {
+                return true
+            }
+
+            "2" -> {
+                return isItABuyingUser()
+            }
+
+            "3" -> {
+                return false
+            }
+
+            else -> {
+                return true
+            }
         }
     }
 
+    //黑名单
     fun blockAdBlacklist(): Boolean {
         val blackData = SPUtils.getInstance().getBoolean(FlashCloak.IS_BLACK, true)
-        return getLogicJson().faSekin == "1" && !blackData || getLogicJson().faSekin == "2"
+        when (getLogicJson().faSekin) {
+            "1" -> {
+                return blackData
+            }
+
+            "2" -> {
+                return false
+            }
+
+            else -> {
+                return true
+            }
+        }
     }
 
+    //是否扰流
     fun spoilerOrNot(): Boolean {
-        val faSsap = getLogicJson().faSsap
-        return (faSsap == "1") || (faSsap == "3" && !isItABuyingUser())
+        when (getLogicJson().faSsap) {
+            "1" -> {
+                return true
+            }
+
+            "2" -> {
+                return false
+            }
+
+            "3" -> {
+                return !isItABuyingUser()
+            }
+
+            else -> {
+                return false
+            }
+        }
     }
 
     fun setLoadData(key: String, value: Any) {

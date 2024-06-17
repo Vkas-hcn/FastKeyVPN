@@ -54,6 +54,7 @@ object FlashLoadOpenAd {
                         "yn",
                         context
                     )
+                    Log.e(TAG, "open广告，加载完成")
                 }
 
                 override fun onAdFailedToLoad(loadAdError: LoadAdError) {
@@ -67,6 +68,7 @@ object FlashLoadOpenAd {
                         """
            domain: ${loadAdError.domain}, code: ${loadAdError.code}, message: ${loadAdError.message}
           """"
+                    Log.e(TAG, "open广告，加载失败${error}")
                     DataHelp.putPointTimeYep(
                         "f31",
                         error,
