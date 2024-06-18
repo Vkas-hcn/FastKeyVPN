@@ -89,7 +89,7 @@ class BaseAd private constructor() {
             Log.e(TAG, "${instanceName}广告，黑名单屏蔽: ")
             return
         }
-        if (!userData && (instanceName == "connect" || instanceName == "back" || instanceName == "banner")) {
+        if (!userData && (instanceName == "back" || instanceName == "banner")) {
             Log.e(TAG, "${instanceName}广告，买量屏蔽: ")
             return
         }

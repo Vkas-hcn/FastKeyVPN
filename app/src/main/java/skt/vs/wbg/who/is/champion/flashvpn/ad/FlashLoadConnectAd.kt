@@ -111,14 +111,9 @@ object FlashLoadConnectAd {
         activity: HomeActivity,
         closeWindowFun: () -> Unit
     ): Int {
-        val userData = BaseAppUtils.blockAdUsers()
         val blacklistState = BaseAppUtils.blockAdBlacklist()
         if (blacklistState) {
             Log.e(TAG, "黑名单屏蔽connect-插屏")
-            return 0
-        }
-        if (!userData) {
-            Log.e(TAG, "买量屏蔽connect-插屏")
             return 0
         }
 
