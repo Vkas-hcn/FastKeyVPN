@@ -81,7 +81,7 @@ import java.util.TimeZone
 @SuppressLint("StaticFieldLeak")
 class MainViewModel : ViewModel() {
     var userInterrupt = false
-    lateinit var activity: WeakReference<HomeActivity>
+    lateinit var activity: HomeActivity
     var openServerState = MutableLiveData<OpenServiceState>()
     private var shadowsocksJob: Job? = null
 
@@ -113,7 +113,7 @@ class MainViewModel : ViewModel() {
         flashListName: AppCompatTextView,
         chronometer: Chronometer
     ) {
-        this.activity = WeakReference(activity)
+        this.activity = activity
         activity.bindService(
             Intent(activity, ExternalOpenVPNService::class.java),
             mConnection,
@@ -147,8 +147,8 @@ class MainViewModel : ViewModel() {
 
     private fun requestPermissionForResult(result: ActivityResult) {
         if (result.resultCode == AppCompatActivity.RESULT_OK) {
-            "f7".putPointYep(this.activity.get()!!)
-            activity.get()?.let { mService?.let { it1 -> toConnectVerifyNet() } }
+            "f7".putPointYep(this.activity)
+            activity.let { mService?.let { it1 -> toConnectVerifyNet() } }
         } else {
             openServerState.postValue(OpenServiceState.DISCONNECTED)
         }
@@ -161,7 +161,7 @@ class MainViewModel : ViewModel() {
     }
 
     private fun initOb() {
-        activity.get()?.mBinding?.lifecycleOwner?.let {
+        activity.mBinding.lifecycleOwner?.let {
             openServerState.observe(it) { state ->
                 when (state) {
                     OpenServiceState.CONNECTING -> {
@@ -169,12 +169,12 @@ class MainViewModel : ViewModel() {
                     }
 
                     OpenServiceState.CONNECTED -> {
-                        "f11".putPointYep(activity.get()!!)
-                        getConnectTime(activity.get()!!)
+                        "f11".putPointYep(activity)
+                        getConnectTime(activity)
                         if (isClickConnect && it.lifecycle.currentState == Lifecycle.State.RESUMED) {
                             showConnectLive.postValue(true)
                             isClickConnect = false
-                            BaseAd.getBackInstance().advertisementLoadingFlash(activity.get()!!)
+                            BaseAd.getBackInstance().advertisementLoadingFlash(activity)
                         } else {
                             setViewEnabled(true)
                             stopConnectAnimation()
@@ -187,10 +187,6 @@ class MainViewModel : ViewModel() {
                     }
 
                     OpenServiceState.DISCONNECTED -> {
-                        Log.e(
-                            TAG,
-                            "initOb: ${it.lifecycle.currentState == Lifecycle.State.RESUMED}"
-                        )
                         if (isClickConnect && !isFailConnect && it.lifecycle.currentState == Lifecycle.State.RESUMED) {
                             showConnectLive.postValue(false)
                             isClickConnect = false
@@ -240,7 +236,7 @@ class MainViewModel : ViewModel() {
     }
 
     private fun initViewAndListener() {
-        activity.get()?.let { ac ->
+        activity.let { ac ->
             chronometer.onChronometerTickListener = Chronometer.OnChronometerTickListener { cArg ->
                 val time = System.currentTimeMillis() - cArg.base
                 val d = Date(time)
@@ -251,10 +247,6 @@ class MainViewModel : ViewModel() {
 
             setIcon.setOnClickListener {
                 "f26".putPointYep(ac)
-                if (openServerState.value == OpenServiceState.DISCONNECTING) {
-                    stopToConnectOrDisConnect()
-                    return@setOnClickListener
-                }
                 if (!ac.mBinding.drawer.isOpen) ac.mBinding.drawer.open()
             }
             connectAnimate.setOnClickListener {
@@ -264,10 +256,6 @@ class MainViewModel : ViewModel() {
                 clickToAction(ac)
             }
             listCl.setOnClickListener {
-                if (openServerState.value == OpenServiceState.DISCONNECTING) {
-                    stopToConnectOrDisConnect()
-                    return@setOnClickListener
-                }
                 isNextConnect(ac) {
                     val intent = Intent(ac, ConfigActivity::class.java)
                     intent.putExtra(
@@ -320,7 +308,6 @@ class MainViewModel : ViewModel() {
                         } else if (openServerState.value == OpenServiceState.DISCONNECTING) {
                             stopToConnectOrDisConnect()
                         } else {
-                            ac.finish()
                             ac.moveTaskToBack(true)
                             isUserMainBack = true
                         }
@@ -373,7 +360,7 @@ class MainViewModel : ViewModel() {
 
 
     private fun toEndAc() {
-        activity.get()?.let {
+        activity.let {
             if (BaseAppFlash.isHotStart) {
                 BaseAppFlash.isHotStart = false
                 return
@@ -423,45 +410,16 @@ class MainViewModel : ViewModel() {
         }
     }
 
-    fun stopToConnectOrDisConnect2() {
-        if (shadowsocksJob?.isActive == true) {
-            shadowsocksJob?.cancel()
-            when (openServerState.value) {
-                OpenServiceState.CONNECTING -> {
-                    openServerState.postValue(OpenServiceState.DISCONNECTED)
-                    mService?.disconnect()
-                    cancelConnect = true
-                    "f19".putPointYep(activity.get()!!)
-                }
-
-                OpenServiceState.DISCONNECTING -> {
-                    userInterrupt = true
-                    openServerState.postValue(OpenServiceState.CONNECTED)
-                    "f20".putPointYep(activity.get()!!)
-
-                }
-
-                OpenServiceState.CONNECTED -> {
-                    openServerState.postValue(OpenServiceState.CONNECTED)
-                }
-
-                else -> {}
-            }
-        } else {
-            if (openServerState.value == OpenServiceState.DISCONNECTED) {
-                openServerState.postValue(OpenServiceState.DISCONNECTED)
-            }
-        }
-
-    }
 
     fun toConnectVerifyNet() {
-        if (isAppOnline(activity.get())) {
-            isNextConnect(activity.get()!!) {
-                toConnectOrDisConnect()
+        if (isAppOnline(activity)) {
+            isNextConnect(activity) {
+                if (it) {
+                    toConnectOrDisConnect()
+                }
             }
         } else {
-            activity.get()?.let {
+            activity.let {
                 val customDialog = Dialog(it, R.style.AppDialogStyle)
                 val localLayoutParams = customDialog.window?.attributes
                 localLayoutParams?.gravity = Gravity.CENTER
@@ -491,12 +449,13 @@ class MainViewModel : ViewModel() {
                 activity.mBinding.showLoad = false
                 nextFun(false)
             }
+            activity.mBinding.inLoad.tvLoading.text = "Ad about to play!"
         }
     }
 
     private fun toConnectOrDisConnect() {
 
-        activity.get()?.let {
+        activity.let {
             toAction = true
             BaseAppFlash.isHotStart = false
             cancelConnect = false
@@ -512,7 +471,7 @@ class MainViewModel : ViewModel() {
                     BaseAppFlash.vpnClickState = 0
                     playConnectAnimation()
                     shadowsocksJob =
-                        activity.get()?.let { mService?.let { it1 -> openVTool(it, it1) } }
+                        activity.let { mService?.let { it1 -> openVTool(it, it1) } }
                 }
 
                 else -> {}
@@ -527,7 +486,7 @@ class MainViewModel : ViewModel() {
 
     private fun disconnectShadowsocks(): Job {
         val job = MainScope().launch(Dispatchers.IO) {
-            activity.get().let { ac ->
+            activity.let { ac ->
                 if (ac != null) {
                     openServerState.postValue(OpenServiceState.DISCONNECTING)
                     delay(2000)
@@ -540,7 +499,7 @@ class MainViewModel : ViewModel() {
                     return@launch
                 } else if (isActive) {
                     mService?.disconnect()
-                    "f10".putPointYep(activity.get()!!)
+                    "f10".putPointYep(activity)
                 }
             }
         }
@@ -621,7 +580,7 @@ class MainViewModel : ViewModel() {
                 }
 
                 "RECONNECTING" -> {
-                    Toast.makeText(activity.get(), "Reconnecting", Toast.LENGTH_LONG).show()
+                    Toast.makeText(activity, "Reconnecting", Toast.LENGTH_LONG).show()
 
                 }
 
@@ -645,7 +604,7 @@ class MainViewModel : ViewModel() {
     var connectTime: Long = 0
 
     fun openVTool(context: Context, server: IOpenVPNAPIService): Job? {
-        activity.get()?.let { ac ->
+        activity.let { ac ->
             if (checkVPNPermission(ac)) {
                 val job = MainScope().launch(Dispatchers.IO) {
                     openServerState.postValue(OpenServiceState.CONNECTING)
@@ -683,11 +642,11 @@ class MainViewModel : ViewModel() {
                                     "f12",
                                     "Connect Failed!",
                                     "re",
-                                    activity.get()!!
+                                    activity
                                 )
                                 stopToConnectOrDisConnect()
                                 Looper.prepare()
-                                Toast.makeText(activity.get(), "Connect Failed!", Toast.LENGTH_LONG)
+                                Toast.makeText(activity, "Connect Failed!", Toast.LENGTH_LONG)
                                     .show()
                                 Looper.loop()
                                 cancel()
@@ -739,7 +698,7 @@ class MainViewModel : ViewModel() {
                 BaseAd.getConnectInstance().advertisementLoadingFlash(activity)
             }
             try {
-                withTimeout(8000) {
+                withTimeout(10000) {
                     while (isActive) {
                         when (FlashLoadConnectAd.displayConnectAdvertisementFlash(
                             activity,

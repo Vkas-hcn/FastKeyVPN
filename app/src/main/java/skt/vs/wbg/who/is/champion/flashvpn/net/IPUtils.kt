@@ -15,6 +15,7 @@ import retrofit2.Response
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import retrofit2.http.GET
+import skt.vs.wbg.who.`is`.champion.flashvpn.BuildConfig
 import skt.vs.wbg.who.`is`.champion.flashvpn.R
 import skt.vs.wbg.who.`is`.champion.flashvpn.base.BaseActivityFlash
 import skt.vs.wbg.who.`is`.champion.flashvpn.base.BaseAppFlash
@@ -112,7 +113,9 @@ object IPUtils {
             BaseAppFlash.acFlashList.forEach { it.finish() }
             exitProcess(0)
         }
-//        customDialog.show()
+        if (!BuildConfig.DEBUG) {
+            customDialog.show()
+        }
     }
 
     fun checkIpIsBanded(string: String?): Boolean {
