@@ -412,7 +412,7 @@ class MainViewModel : ViewModel() {
 
 
     fun toConnectVerifyNet() {
-        if (isAppOnline(activity)) {
+        if (true) {
             isNextConnect(activity) {
                 if (it) {
                     toConnectOrDisConnect()
